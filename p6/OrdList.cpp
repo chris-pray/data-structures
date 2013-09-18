@@ -10,9 +10,6 @@ FILENAME:
 
 PURPOSE:
 	This file contains the implementation for all of the methods declared in ordlisttemplate.h
-
-	Structure:		OrdList
-	Implementation:	Binary Search Tree
 */
 
 #pragma once
@@ -20,17 +17,16 @@ PURPOSE:
 template <class ItemType>
 struct node
 {
-	node<ItemType>* left;	// Left subtree pointer
-	ItemType data;			// Data
-	node<ItemType>* right;	// Right subtree pointer
+	node<ItemType>* left;	// Pointer to node's left child
+	ItemType data;			// Record containing the data in node
+	node<ItemType>* right;	// Pointer to node's right child
 
 }; // End node
 
 template <class ItemType>
 OrdListClass<ItemType>::OrdListClass()
 {
-	//Initialize PDMs
-	root	= NULL;
+	root = NULL;
 	currPos = NULL;
 	prevPos = NULL;
 
@@ -39,20 +35,20 @@ OrdListClass<ItemType>::OrdListClass()
 template <class ItemType>
 OrdListClass<ItemType>::~OrdListClass()
 {
-	// Return dynamically allocated memory to heap
+	// Return all dynamically allocated memory in the applying object to the heap
 	Clear();
 
 } // End ~OrdListClass()
 
 template <class ItemType>
-OrdListClass<ItemType>::OrdListClass( /* In */ const OrdListClass<ItemType>& orig )	// Deep copy this object
+OrdListClass<ItemType>::OrdListClass
+	( /* In */ const OrdListClass<ItemType>& orig )	// The object to create a deep copy of
 {
-	// Initiallize PDMs
-	root	= NULL;
+	root = NULL;
 	currPos = NULL;
 	prevPos = NULL;
 
-	// *this = orig
+	// Store a deep copy of orig in the applying object
 	operator=( orig );
 
 } // End OrdListClass( const OrdListClass& orig )
@@ -74,16 +70,17 @@ bool OrdListClass<ItemType>::IsFull()const
 template <class ItemType>
 bool OrdListClass<ItemType>::EndOfList()
 {
-	// If current position is NULL
+	// If the current position in the applying object is NULL
 	if( currPos == NULL )
 	{
-		node<ItemType>* temp = root;	// Traversal pointer
+		node<ItemType>* temp = root;	// Temporary traversal pointer
 		
-		// While traversal pointer has a right subtree
+		// Set the traversal pointer to the right-most node in the tree
 		while( temp->right != NULL )
 			temp = temp->right;
 
-		// If parent of current position is right-most node
+		// If the parent of the current position in the applying object is the right-most node in the
+		//  tree
 		if(prevPos == temp)
 			return true;
 
@@ -96,16 +93,16 @@ bool OrdListClass<ItemType>::EndOfList()
 template <class ItemType>
 void OrdListClass<ItemType>::FirstPosition()
 {
-	// If not empty
+	// If the applying object is not empty
 	if( !IsEmpty() )
 	{
 		currPos = root;
-		prevPos = NULL;
 
-		// While the current position is not at the bottom-most left node
+		// Set the current position in the applying object to the left-most node in its tree and set the
+		//  previous position in the applying object to the current position's parent node. If the
+		//  current position is the root of the tree, then the previous position will be NULL.
 		while( currPos->left != NULL )
 		{
-
 			prevPos = currPos;
 			currPos = currPos->left;
 
@@ -118,16 +115,19 @@ void OrdListClass<ItemType>::FirstPosition()
 template <class ItemType>
 void OrdListClass<ItemType>::NextPosition()
 {
-	// If current position is not NULL
+	// If the current position in the applying object's tree is not NULL
 	if( currPos != NULL )
 	{
-		// If current position has a right subtree
+		// If the current position in the applying object's tree has a right subtree
 		if( currPos->right != NULL )
 		{
-			node<ItemType>* nextPos = currPos->right;	// Traversal pointer to next in-order item
-			node<ItemType>* prevNextPos = currPos;		// Traversal pointer to parent of next in-order item
+			node<ItemType>* nextPos = currPos->right;	// A temporary traversal pointer to the next
+														//  in-order position in the tree
+			node<ItemType>* prevNextPos = currPos;		// A temporary traversal pointer to the parent
+														//  of the next in-order position in the tree
 
-			// While there is a left subtree
+			// Set the traversal pointers to the next in-order position in the tree and the parent of
+			//  the in-order position in the tree
 			while( nextPos->left != NULL )
 			{
 				prevNextPos = nextPos;
@@ -139,35 +139,41 @@ void OrdListClass<ItemType>::NextPosition()
 			prevPos = prevNextPos;
 
 		} // End if
-		// Else if current position is a left child
+		// Else if the previous position in the tree is not NULL and the current position in the tree is
+		//  the left subtree of the previous position in the tree
 		else if( prevPos != NULL && currPos == prevPos->left )
 		{
 			currPos = prevPos;
 
-			// If previous position is not root
+			// If the previous position in the tree is not the root of the tree
 			if( prevPos != root )
-				// Set previous position to its parent
+				// Set the previous position in the tree to its parent
 				rFindParent( root );
-			// Else previous position is root
+			// Else the previous position in the tree is the root of the tree
 			else
 				prevPos = NULL;
 
 		} // End else if
-		// Else if current position is a right child
+		// Else if the previous position in the tree is not NULL and the current position in the tree is
+		//  the right subtree of the previous position in the tree
 		else if( prevPos != NULL )
 		{
-			node<ItemType>* temp;			// Traversal pointer to next in-order item
-			node<ItemType>* prevTemp;		// Traversal pointer to parent of next in-order item
-			node<ItemType>* end = prevPos;	// Traveral pointer to a child of item to exit loop at
-			bool found = false;				// Indicates whether next in-order item was found
+			node<ItemType>* temp;			// A temporary traversal pointer to the next in-order
+											//  position in the tree
+			node<ItemType>* prevTemp;		// A temporary traversal pointer to the parent of the next
+											//  in-order position in the tree
+			node<ItemType>* end = prevPos;	// A temporary pointer to a subtree of the last node in a
+											//  traversal
+			bool found = false;				// Indicates whether the next in-order position in the tree
+											//  was found
 
-			// While next in-order item has not been found
+			// While the next in-order position in the tree has not been found
 			while( !found )
 			{
 				temp = root;
 				prevTemp = NULL;
 
-				// If traversal pointer does not equal the child of the last node in a
+				// If the temporary traversal pointer does not equal the child of the last node in a
 				//  traversal
 				if( temp != end )
 				{

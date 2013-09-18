@@ -4,44 +4,52 @@
 //Modifications:	Chris Pray	- 5/10/13
 //
 //Purpose:			This specification contains a template class for an ordered list. The parameterized
-//					type, ItemType, of the ordered list must be defined before the inclusion of this
-//					file and it must be a structure with at least 1 KeyType, named key, which must be
-//					defined before ItemType's declaration. This class template allows for list
-//					insertions, deletions, looks ups, and printing. It contains a constructor, a
-//					copy constructor, a destructor, 15 public methods, 4 overloaded operators, 14
-//					protected methods, and 3 private data members. A summary of the public methods
-//					appears below.
+//					type, ItemType must be defined before the inclusion of this file in the application
+//					and it must be a structure with field named, key, which is of type KeyType, which
+//					also must be defined in the application including this file. This class template
+//					allows for list insertions, deletions, looks ups, and printing. It contains a
+//					constructor, a copy constructor, a destructor, 15 public methods, 4 overloaded
+//					operators, 14 protected methods, and 3 private data members. A summary of the public
+//					methods appears below.
 // 
 //Assumptions:
-//	1. The parameterized type, ItemType, must be defined before the inclusion of this file and it must
-//		be a structure with at least 1 KeyType, named key, which must be defined before ItemType's
-//		declaration. key must be a unique value to the item which contains it.
-//	2. FirstPosition, NextPosition, and EndOfList are designed to be used in conjunction to iterate
-//		through the list.
-//	3. Unless Retrieve is being used in conjunction with FirstPosition, NextPosition, and EndOfList,
-//		Find must be called and return true immediately before calling Retrieve.
-//	4. Find must be called and return false immediately before calling Insert.
-//	5. Find must be called and return true immediately before calling Insert.
-//	6. FunctionType and FunctionType2 have been appropriately defined in the client.
+//	1. The parameterized type, ItemType, must be defined in the application using this template class
+//		and must be a struct with a field called key, which also must be defined in the application
+//		using this template class. key must be a unique value to the item which contains it.
+//	2. FirstPosition, NextPosition, and EndOfList are designed to be used in the context of iterating
+//		through a list.
+//	3. Unless Retrieve is being used in conjunction with FirstPosition, NextPosition, and EndOfList to
+//		print the contents of the list, Find must be called before a call to Retrieve, and in that case
+//		Retrieve should only be called if Find returned true.
+//	4. Find must be called immediately before a call to Insert, and Insert should only be called in Find
+//		returned false.
+//	5. Find must be called immediately before a call to Delete, and Delete should only be called if Find
+//		returned true.
+//	6. FunctionType and FunctionType2 have been defined in the client so that they print an item in the
+//		list in the correct format.
 //
 //Error Handling: 
-//	Delete verifies that the key at the current position is the key being passed
+//	If the key passed when calling Delete does not match the key of the item at the current position in
+//	the list, the item does not get Deleted.
 //
 //Exception Handling:
 //	
 //	*Exceptions Caught*
+//
 //		bad_alloc
-//			When an attempt to dynamically allocate memory fails.
+//			When an attempt to dynamically allocate memory fails
 //
 //	*Exceptions Thrown*
+//
 //		DuplicateKeyException
-//			When an attempt to insert an item into a list whoses key equals the key of an item in the
-//			list.
+//			When an attempt to insert an item into a list with a key equal to a key already in the list
+//
 //		InvalidRetrieveException
-//			When an attempt to retrieve from an invalid location. A location is invalid when the current
-//			position is NULL.
+//			When an attempt to retrieve an item from an empty list or from an invalid location is made.
+//			An invalid location is one where currPos == NULL
+//
 //		OutOfMemoryException
-//			When bad_alloc is caught. See "Exceptions Caught".
+//			When failure to allocate dynamic memory occurs
 
 //Summary of Public Methods:
 //
@@ -131,7 +139,6 @@ using namespace OrdListExceptions;
 
 typedef void (*FunctionType)(ItemType&);
 	// Function pointer used to return an ItemType record to the client during a traversal
-
 typedef void (*FunctionType2)(ItemType&, ofstream&);
 	// Function pointer used to return an ItemType record and an output file stream to the client during
 	//  a traversal
